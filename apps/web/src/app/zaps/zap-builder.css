@@ -1,0 +1,9 @@
+section { margin-top: 2rem; }
+article { border: 1px solid #d5dbea; padding: 0.75rem 1rem; margin: 0.75rem 0; border-radius: 0.4rem; }
+fieldset { margin: 1rem 0; padding: 1rem; border: 1px solid #c9d1e0; }
+label { display: block; margin: 0.75rem 0 0.25rem; }
+input:not([type="checkbox"]), select, textarea { box-sizing: border-box; width: 100%; padding: 0.55rem; font: inherit; }
+button { margin: 0.25rem; padding: 0.5rem 0.75rem; cursor: pointer; }
+button:disabled { cursor: default; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #edf2fc; padding: 0.75rem; }
+[role="alert"] { color: #9f2121; }

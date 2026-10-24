@@ -1,0 +1,75 @@
+<section aria-label="Your Zaps">
+  <h2>Your Zaps</h2>
+  <button type="button" (click)="create()" [disabled]="saving() || !connections().length">Create Zap</button>
+  <button type="button" (click)="load()" [disabled]="loading() || saving()">Refresh Zaps</button>
+  @if (!connections().length) { <p>Connect a repository above before creating a Zap.</p> }
+  @if (loading()) { <p role="status">Loading your Zaps...</p> }
+  @else if (zaps().length === 0) { <p>No Zaps yet. Create one to comment on new pull requests.</p> }
+  @for (zap of zaps(); track zap.id) {
+    <article>
+      <h3>{{ zap.name }}</h3>
+      <p>{{ zap.enabled ? 'On' : 'Off' }} · {{ repositoryName(zap.connectionId) }}</p>
+      <p>GitHub: pull request opened → comment on the same PR</p>
+      <button type="button" (click)="edit(zap)" [disabled]="saving()">Edit {{ zap.name }}</button>
+    </article>
+  }
+  @if (notice()) { <p role="status">{{ notice() }}</p> }
+  @if (error()) { <p role="alert">{{ error() }}</p> }
+
+  @if (editorOpen()) {
+    <form (ngSubmit)="save()" aria-label="Zap builder">
+      <h3>{{ editingId ? 'Edit Zap' : 'Create Zap' }}</h3>
+      <fieldset [disabled]="saving()">
+        <legend>Zap configuration</legend>
+        <label for="zap-name">Name</label>
+        <input id="zap-name" name="zapName" [(ngModel)]="draft.name" required maxlength="100" />
+        <label><input type="checkbox" name="zapEnabled" [(ngModel)]="draft.enabled" /> Enabled</label>
+        <label for="zap-repository">Repository</label>
+        <select id="zap-repository" name="zapRepository" [(ngModel)]="draft.connectionId" required>
+          <option value="" disabled>Select a connected repository</option>
+          @for (connection of connections(); track connection.id) {
+            <option [value]="connection.id" [disabled]="!connection.enabled">{{ connection.fullName }}</option>
+          }
+        </select>
+        <fieldset>
+          <legend>Trigger</legend>
+          <label for="trigger-provider">Trigger application</label>
+          <select id="trigger-provider" name="triggerProvider" [(ngModel)]="draft.trigger.provider">
+            <option value="github">GitHub</option>
+            <option value="gitlab" disabled>GitLab — unavailable</option>
+            <option value="linear" disabled>Linear — unavailable</option>
+            <option value="slack" disabled>Slack — unavailable</option>
+          </select>
+          <label for="trigger-event">Event</label>
+          <select id="trigger-event" name="triggerEvent" [(ngModel)]="draft.trigger.event">
+            <option value="pull_request.opened">Pull request opened</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>Action</legend>
+          <label for="action-provider">Action application</label>
+          <select id="action-provider" name="actionProvider" [(ngModel)]="draft.action.provider">
+            <option value="github">GitHub</option>
+            <option value="gitlab" disabled>GitLab — unavailable</option>
+            <option value="linear" disabled>Linear — unavailable</option>
+            <option value="slack" disabled>Slack — unavailable</option>
+          </select>
+          <label for="action-type">Action</label>
+          <select id="action-type" name="actionType" [(ngModel)]="draft.action.type">
+            <option value="comment">Comment on the same pull request</option>
+          </select>
+          <label for="comment-template">Comment template</label>
+          <textarea id="comment-template" name="commentTemplate" [(ngModel)]="draft.action.template" rows="5" required maxlength="10000"></textarea>
+          <p>Append a mapping variable:</p>
+          @for (field of fields; track field) {
+            <button type="button" (click)="insert(field)">{{ field }}</button>
+          }
+          <p>Preview with sample PR data:</p>
+          <pre aria-label="Comment preview">{{ preview }}</pre>
+        </fieldset>
+        <button type="submit">{{ saving() ? 'Saving...' : 'Save Zap' }}</button>
+        <button type="button" (click)="editorOpen.set(false)">Cancel</button>
+      </fieldset>
+    </form>
+  }
+</section>

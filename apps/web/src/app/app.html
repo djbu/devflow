@@ -1,0 +1,28 @@
+<main>
+  <h1>Devflow</h1>
+  <p>Workflow automation, starting with GitHub.</p>
+  <p role="status" aria-live="polite">{{ status() }}</p>
+
+  <section aria-label="GitHub account">
+    @if (auth.loading()) {
+      <p>Loading your session...</p>
+    } @else if (auth.user(); as user) {
+      <h2>Signed in as {{ user.login }}</h2>
+      <p>{{ user.name || user.login }}</p>
+      <a [href]="user.profileUrl" target="_blank" rel="noopener noreferrer">GitHub profile</a>
+      <button type="button" (click)="auth.logout()" [disabled]="auth.signingOut()">
+        {{ auth.signingOut() ? 'Signing out...' : 'Sign out' }}
+      </button>
+      <app-repositories />
+    } @else if (auth.configured()) {
+      <p>Sign in to connect your GitHub account.</p>
+      <a class="login" href="/api/auth/github">Sign in with GitHub</a>
+    } @else {
+      <p>GitHub sign-in is unavailable until the server is configured.</p>
+    }
+    @if (auth.error()) {
+      <p role="alert">{{ auth.error() }}</p>
+      <button type="button" (click)="auth.load()">Reload session</button>
+    }
+  </section>
+</main>

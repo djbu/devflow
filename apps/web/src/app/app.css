@@ -1,0 +1,8 @@
+main { max-width: 48rem; margin: 4rem auto; padding: 0 1.5rem; }
+h1 { color: #243d80; }
+[role="status"] { padding: 1rem; background: #edf2fc; border-radius: 0.5rem; }
+section { margin-top: 2rem; }
+button, .login { display: inline-block; margin: 0.5rem; padding: 0.65rem 1rem; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; }
+[role="alert"] { color: #9f2121; }
