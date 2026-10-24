@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output and caches
+dist/
+build/
+out-tsc/
+.angular/
+.cache/
+*.tsbuildinfo
+
+# Test output
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Local environment and credentials (keep example templates tracked)
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local database files
+.mongodb/
+.mongo-data/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# Scratch files
+tmp/
