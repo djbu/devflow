@@ -1,74 +1,26 @@
-<section aria-label="Your Zaps">
-  <h2>Your Zaps</h2>
-  <button type="button" (click)="create()" [disabled]="saving() || !connections().length">Create Zap</button>
-  <button type="button" (click)="load()" [disabled]="loading() || saving()">Refresh Zaps</button>
-  @if (!connections().length) { <p>Connect a repository above before creating a Zap.</p> }
-  @if (loading()) { <p role="status">Loading your Zaps...</p> }
-  @else if (zaps().length === 0) { <p>No Zaps yet. Create one to comment on new pull requests.</p> }
-  @for (zap of zaps(); track zap.id) {
-    <article>
-      <h3>{{ zap.name }}</h3>
-      <p>{{ zap.enabled ? 'On' : 'Off' }} · {{ repositoryName(zap.connectionId) }}</p>
-      <p>GitHub: pull request opened → comment on the same PR</p>
-      <button type="button" (click)="edit(zap)" [disabled]="saving()">Edit {{ zap.name }}</button>
-    </article>
+<section id="automations" aria-label="Your Zaps">
+  <div class="section-heading"><div><h2>Your Zaps <span class="count">{{ zaps().length }}</span></h2><p>One trigger. One action. A little less work.</p></div><div class="actions"><button type="button" class="icon-button subtle" title="Refresh Zaps" aria-label="Refresh Zaps" (click)="load()" [disabled]="loading() || saving()"><svg class="icon" aria-hidden="true"><use href="icons.svg#refresh"/></svg></button><button type="button" class="primary" (click)="create()" [disabled]="saving() || !connections().length"><svg class="icon" aria-hidden="true"><use href="icons.svg#plus"/></svg>Create Zap</button></div></div>
+  @if (!connections().length) { <p class="notice">Connect a repository to create your first Zap.</p> }
+  @if (loading()) { <p class="notice" role="status">Loading your Zaps...</p> }
+  @else if (zaps().length === 0) {
+    <div class="empty-state panel"><div class="empty-flow"><span><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg></span><svg class="icon flow-arrow" aria-hidden="true"><use href="icons.svg#arrow"/></svg><span><svg class="icon" aria-hidden="true"><use href="icons.svg#comment"/></svg></span></div><h3>No Zaps yet.</h3><p>Create one to comment on new pull requests.</p><small>Your next pull request could welcome itself.</small></div>
   }
-  @if (notice()) { <p role="status">{{ notice() }}</p> }
-  @if (error()) { <p role="alert">{{ error() }}</p> }
+  @for (zap of zaps(); track zap.id) {
+    <article class="zap-card panel"><div class="zap-card-heading"><span class="zap-icon"><svg class="icon" aria-hidden="true"><use href="icons.svg#flow"/></svg></span><div class="zap-title"><h3>{{ zap.name }}</h3><p><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg><span>{{ repositoryName(zap.connectionId) }}</span></p></div><span class="badge" [class.off]="!zap.enabled">{{ zap.enabled ? 'On' : 'Off' }}</span></div><div class="workflow-path"><div class="workflow-step"><svg class="icon" aria-hidden="true"><use href="icons.svg#pr"/></svg><span><small>When this happens</small>Pull request opened</span></div><svg class="icon path-arrow" aria-hidden="true"><use href="icons.svg#arrow"/></svg><div class="workflow-step"><svg class="icon" aria-hidden="true"><use href="icons.svg#comment"/></svg><span><small>Then do this</small>Comment on the PR</span></div></div><div class="zap-card-footer"><span><span class="provider-dot"></span>GitHub workflow</span><button type="button" class="subtle" (click)="edit(zap)" [disabled]="saving()" [attr.aria-label]="'Edit ' + zap.name">Edit workflow<svg class="icon" aria-hidden="true"><use href="icons.svg#arrow"/></svg></button></div></article>
+  }
+  @if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+  @if (error()) { <p class="notice error" role="alert">{{ error() }}</p> }
 
   @if (editorOpen()) {
-    <form (ngSubmit)="save()" aria-label="Zap builder">
-      <h3>{{ editingId ? 'Edit Zap' : 'Create Zap' }}</h3>
-      <fieldset [disabled]="saving()">
-        <legend>Zap configuration</legend>
-        <label for="zap-name">Name</label>
-        <input id="zap-name" name="zapName" [(ngModel)]="draft.name" required maxlength="100" />
-        <label><input type="checkbox" name="zapEnabled" [(ngModel)]="draft.enabled" /> Enabled</label>
-        <label for="zap-repository">Repository</label>
-        <select id="zap-repository" name="zapRepository" [(ngModel)]="draft.connectionId" required>
-          <option value="" disabled>Select a connected repository</option>
-          @for (connection of connections(); track connection.id) {
-            <option [value]="connection.id" [disabled]="!connection.enabled">{{ connection.fullName }}</option>
-          }
-        </select>
-        <fieldset>
-          <legend>Trigger</legend>
-          <label for="trigger-provider">Trigger application</label>
-          <select id="trigger-provider" name="triggerProvider" [(ngModel)]="draft.trigger.provider">
-            <option value="github">GitHub</option>
-            <option value="gitlab" disabled>GitLab — unavailable</option>
-            <option value="linear" disabled>Linear — unavailable</option>
-            <option value="slack" disabled>Slack — unavailable</option>
-          </select>
-          <label for="trigger-event">Event</label>
-          <select id="trigger-event" name="triggerEvent" [(ngModel)]="draft.trigger.event">
-            <option value="pull_request.opened">Pull request opened</option>
-          </select>
-        </fieldset>
-        <fieldset>
-          <legend>Action</legend>
-          <label for="action-provider">Action application</label>
-          <select id="action-provider" name="actionProvider" [(ngModel)]="draft.action.provider">
-            <option value="github">GitHub</option>
-            <option value="gitlab" disabled>GitLab — unavailable</option>
-            <option value="linear" disabled>Linear — unavailable</option>
-            <option value="slack" disabled>Slack — unavailable</option>
-          </select>
-          <label for="action-type">Action</label>
-          <select id="action-type" name="actionType" [(ngModel)]="draft.action.type">
-            <option value="comment">Comment on the same pull request</option>
-          </select>
-          <label for="comment-template">Comment template</label>
-          <textarea id="comment-template" name="commentTemplate" [(ngModel)]="draft.action.template" rows="5" required maxlength="10000"></textarea>
-          <p>Append a mapping variable:</p>
-          @for (field of fields; track field) {
-            <button type="button" (click)="insert(field)">{{ field }}</button>
-          }
-          <p>Preview with sample PR data:</p>
-          <pre aria-label="Comment preview">{{ preview }}</pre>
-        </fieldset>
-        <button type="submit">{{ saving() ? 'Saving...' : 'Save Zap' }}</button>
-        <button type="button" (click)="editorOpen.set(false)">Cancel</button>
+    <form class="builder panel" (ngSubmit)="save()" aria-label="Zap builder">
+      <div class="builder-heading"><p class="eyebrow">Workflow builder</p><h3>{{ editingId ? 'Edit Zap' : 'Create Zap' }}</h3><p>Make your pull request workflow your own.</p></div>
+      <fieldset [disabled]="saving()" class="builder-fields">
+        <legend class="sr-only">Zap configuration</legend>
+        <div class="name-row"><div><label for="zap-name">Name</label><input id="zap-name" name="zapName" [(ngModel)]="draft.name" required maxlength="100" placeholder="e.g. Welcome new contributors" /></div><label class="enable-control"><input type="checkbox" name="zapEnabled" [(ngModel)]="draft.enabled" /><span>Enabled</span></label></div>
+        <div class="repository-field"><label for="zap-repository">Repository</label><select id="zap-repository" name="zapRepository" [(ngModel)]="draft.connectionId" required><option value="" disabled>Select a connected repository</option>@for (connection of connections(); track connection.id) { <option [value]="connection.id" [disabled]="!connection.enabled">{{ connection.fullName }}</option> }</select></div>
+        <fieldset class="step-section"><legend><span class="step-number">01</span>Trigger<span class="step-description">When this happens</span></legend><div class="field-grid"><div><label for="trigger-provider">Trigger application</label><select id="trigger-provider" name="triggerProvider" [(ngModel)]="draft.trigger.provider"><option value="github">GitHub</option><option value="gitlab" disabled>GitLab — unavailable</option><option value="linear" disabled>Linear — unavailable</option><option value="slack" disabled>Slack — unavailable</option></select></div><div><label for="trigger-event">Event</label><select id="trigger-event" name="triggerEvent" [(ngModel)]="draft.trigger.event"><option value="pull_request.opened">Pull request opened</option></select></div></div></fieldset>
+        <fieldset class="step-section"><legend><span class="step-number">02</span>Action<span class="step-description">Then do this</span></legend><div class="field-grid"><div><label for="action-provider">Action application</label><select id="action-provider" name="actionProvider" [(ngModel)]="draft.action.provider"><option value="github">GitHub</option><option value="gitlab" disabled>GitLab — unavailable</option><option value="linear" disabled>Linear — unavailable</option><option value="slack" disabled>Slack — unavailable</option></select></div><div><label for="action-type">Action</label><select id="action-type" name="actionType" [(ngModel)]="draft.action.type"><option value="comment">Comment on the same pull request</option></select></div></div><div class="template-field"><label for="comment-template">Comment template</label><textarea id="comment-template" name="commentTemplate" [(ngModel)]="draft.action.template" rows="5" required maxlength="10000"></textarea><p class="field-hint">Append a value from the pull request:</p><div class="mapping-fields">@for (field of fields; track field) { <button type="button" class="mapping-button" (click)="insert(field)"><svg class="icon" aria-hidden="true"><use href="icons.svg#plus"/></svg>{{ field }}</button> }</div></div><div class="preview"><div class="preview-heading"><span><svg class="icon" aria-hidden="true"><use href="icons.svg#comment"/></svg>Comment preview</span><small>Sample PR data</small></div><pre aria-label="Comment preview">{{ preview }}</pre></div></fieldset>
+        <div class="builder-actions"><button type="button" class="subtle" (click)="editorOpen.set(false)">Cancel</button><button type="submit" class="primary">{{ saving() ? 'Saving...' : 'Save Zap' }}<svg class="icon" aria-hidden="true"><use href="icons.svg#arrow"/></svg></button></div>
       </fieldset>
     </form>
   }

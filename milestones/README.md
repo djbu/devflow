@@ -63,3 +63,30 @@ reserve the final 45 minutes for required checks and honest submission notes.
   using the temporary development Zap at that checkpoint.
 - Milestone 5 persisted Zap create/edit/disable and duplicate suppression: passed
   with real PRs #2-#4. The temporary configuration is removed.
+
+## Post-review design polish
+
+- Completed at user request: 2026-10-24 08:51:40 to 09:16 -05:00, about
+  24m 20s (stop minute precision); counts toward the original exercise clock.
+- Refined workspace navigation, workflow cards, builder, sign-in, connections,
+  activity, and responsive styling with local SVG assets; no new dependencies.
+- [Verification](../docs/verification.md#post-review-design-polish): build and
+  typecheck passed; all 57 tests passed; desktop/mobile and sign-in reviewed.
+  Mobile table overflow was fixed. No outstanding blocker; changes await user
+  review and a meaningful commit. Initial MVP publication remains unchanged.
+
+## Responsive follow-up
+
+- User-requested responsive review: 2026-10-24 09:16:45 to 09:21 -05:00,
+  about 4m 15s (stop minute precision), on the original exercise clock.
+- Measured the open builder at 320, 375, 390, 600, 768, 1024, 1101, and
+  1440 px widths; no document overflow before the follow-up adjustments.
+- Increased touch targets and mobile input sizes, stacked workflow steps on
+  narrow phones, wrapped long content, and labeled/focused the activity scroll
+  region. Build/typecheck and all 57 tests passed afterward with no size warnings.
+- Final visual recheck blocked by browser automation timeouts/control changes;
+  physical devices and Safari remain unverified. See verification details.
+  Changes remain local for user review; no commit or publication performed.
+
+The user subsequently approved committing/pushing the design and responsive
+delivery; publication preparation/handoff occurred at about 09:22 -05:00.

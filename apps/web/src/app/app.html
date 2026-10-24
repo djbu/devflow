@@ -1,28 +1,38 @@
-<main>
-  <h1>Devflow</h1>
-  <p>Workflow automation, starting with GitHub.</p>
-  <p role="status" aria-live="polite">{{ status() }}</p>
+<div id="top" class="app-shell" [class.signed-out]="!auth.user()">
+  <aside class="sidebar" aria-label="Workspace navigation">
+    <a class="brand" href="#top" aria-label="Devflow home"><span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="icons.svg#flow"/></svg></span>devflow<span class="brand-dot">.</span></a>
+    <div class="workspace-label"><span class="workspace-avatar">P</span><span>Personal workspace<small>GitHub workflows</small></span></div>
+    <p class="nav-heading">Workspace</p>
+    <nav>
+      <a href="#automations" title="Automations" class="selected"><svg class="icon" aria-hidden="true"><use href="icons.svg#grid"/></svg>Automations</a>
+      <a href="#connections" title="Connections"><svg class="icon" aria-hidden="true"><use href="icons.svg#link"/></svg>Connections</a>
+      <a href="#activity" title="Activity"><svg class="icon" aria-hidden="true"><use href="icons.svg#activity"/></svg>Activity</a>
+    </nav>
+    <div class="sidebar-note"><svg class="icon" aria-hidden="true"><use href="icons.svg#flow"/></svg><p>A little automation.<br/>More room to build.</p></div>
+    @if (auth.user(); as user) {
+      <div class="account">
+        <a class="profile" [attr.aria-label]="'GitHub profile for ' + user.login" [href]="user.profileUrl" target="_blank" rel="noopener noreferrer"><span class="avatar">{{ user.login.slice(0, 2) }}</span><span><strong>{{ user.name || user.login }}</strong><small>Signed in as {{ user.login }}</small></span></a>
+        <button type="button" class="sign-out" aria-label="Sign out" (click)="auth.logout()" [disabled]="auth.signingOut()"><svg class="icon" aria-hidden="true"><use href="icons.svg#exit"/></svg>{{ auth.signingOut() ? 'Signing out...' : 'Sign out' }}</button>
+      </div>
+    }
+  </aside>
 
-  <section aria-label="GitHub account">
-    @if (auth.loading()) {
-      <p>Loading your session...</p>
-    } @else if (auth.user(); as user) {
-      <h2>Signed in as {{ user.login }}</h2>
-      <p>{{ user.name || user.login }}</p>
-      <a [href]="user.profileUrl" target="_blank" rel="noopener noreferrer">GitHub profile</a>
-      <button type="button" (click)="auth.logout()" [disabled]="auth.signingOut()">
-        {{ auth.signingOut() ? 'Signing out...' : 'Sign out' }}
-      </button>
-      <app-repositories />
-    } @else if (auth.configured()) {
-      <p>Sign in to connect your GitHub account.</p>
-      <a class="login" href="/api/auth/github">Sign in with GitHub</a>
-    } @else {
-      <p>GitHub sign-in is unavailable until the server is configured.</p>
-    }
-    @if (auth.error()) {
-      <p role="alert">{{ auth.error() }}</p>
-      <button type="button" (click)="auth.load()">Reload session</button>
-    }
-  </section>
-</main>
+  <main>
+    <div class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Automations</strong></div><p class="system-status" [class.unavailable]="status().includes('unavailable')" role="status" aria-live="polite"><span class="status-dot"></span>{{ status() }}</p></div>
+    <header class="page-header"><p class="eyebrow">Build once. Let it flow.</p><h1>Automations</h1><p>Less repetitive work. More time for your next pull request.</p></header>
+
+    <section aria-label="GitHub account">
+      @if (auth.loading()) {
+        <div class="login-panel panel"><p class="muted">Loading your session...</p></div>
+      } @else if (auth.user()) {
+        <app-repositories />
+      } @else if (auth.configured()) {
+        <div class="login-panel panel"><span class="login-symbol"><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg></span><p class="eyebrow">Your workflow starts here</p><h2>Connect your GitHub account</h2><p>Turn a new pull request into a thoughtful welcome, automatically.</p><a class="login button primary" href="/api/auth/github"><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg>Sign in with GitHub<svg class="icon" aria-hidden="true"><use href="icons.svg#arrow"/></svg></a><small>Connect a repository and create your first Zap.</small></div>
+      } @else {
+        <div class="login-panel panel"><span class="login-symbol"><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg></span><h2>Welcome to Devflow</h2><p>GitHub sign-in is unavailable until the server is configured.</p></div>
+      }
+      @if (auth.error()) { <p class="notice error" role="alert">{{ auth.error() }}</p><button type="button" (click)="auth.load()">Reload session</button> }
+    </section>
+    <footer class="page-footer"><span>Small workflows. A smoother workday.</span><span>Devflow · GitHub automations</span></footer>
+  </main>
+</div>

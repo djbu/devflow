@@ -204,3 +204,52 @@ commit; there are no fabricated or backdated milestone commits. The user reporte
 06:20 as the actual exercise start; the final publication handoff/stop is recorded
 as 08:50 America/Bogota on 2026-10-24, with minute precision. The private repository
 still needs evaluator access before it is shared externally.
+
+## Post-review design polish
+
+2026-10-24 08:51:40 to 09:16 -05:00 (stop minute precision), following the user
+request for visual polish. The original MVP handoff above remains historical.
+
+- Updated Angular presentation and local SVG assets without adding dependencies
+  or changing backend execution behavior. Extracted repository presentation into
+  its own template/styles and displayed the existing execution start time.
+- Final production build and typecheck passed; all 57 tests passed (11 web,
+  46 API). Component styles stay within the existing 4 kB warning budget; final
+  build emitted no budget warnings. Git diff whitespace check passed.
+- Chrome desktop review covered the dashboard, existing Zap editor/preview, and
+  signed-out screen. Real GitHub sign-out/sign-in with the existing grant loaded
+  the owned connection, enabled Zap, and real execution history.
+- At a 390 by 844 viewport, the dashboard and open editor fit the document width
+  (390 px). Fixed activity-table overflow by positioning the hidden header label
+  inside its cell. Keyboard Tab from Name reached Enabled with a visible focus
+  ring. Restored the desktop viewport afterward.
+- Opened the existing Zap editor and canceled without saving. No new PR or
+  comment was created for this presentation-only pass; prior real webhook
+  evidence remains above. Changes are local and uncommitted for user review.
+
+## Responsive follow-up
+
+2026-10-24 09:16:45 to 09:21 -05:00 (stop minute precision).
+
+- Before follow-up changes, Chrome viewport measurements with the existing
+  editor open found document width equal to viewport width at 320, 375, 390,
+  600, 768, 1024, 1101, and 1440 px. A 320 by 740 screenshot showed cramped
+  Zap heading/actions and undersized mobile controls.
+- Added minimum 44 px touch-control heights for narrow/coarse-pointer layouts,
+  16 px mobile form text to avoid the usual iOS input-focus zoom trigger,
+  narrow-phone heading/step stacking, long-text wrapping, and an accessible
+  focusable execution-history scroll region with instructions. Added a profile
+  accessible name because narrow layouts hide its text.
+- After changes: production build, typecheck, 11 web tests and 46 API tests
+  passed; no build-budget warnings. Whitespace check passed; local app HTTP 200.
+- Final viewport/long-content visual recheck could not be completed: browser
+  automation repeatedly timed out after a viewport change. Native Chrome access
+  recovered but a user-control change interrupted navigation before another
+  visual check. No saved workflow mutation or new external effect was performed.
+- Safari, real touch devices, OS keyboards, and physical-device orientation
+  were not tested. The size measurements above predate the final refinements;
+  they must not be presented as a complete cross-browser certification.
+
+Publication follow-up: on 2026-10-24 at approximately 09:22 -05:00 the user
+approved committing and pushing the design/responsive delivery to main. The
+verification limitations above remain applicable; no new test results are claimed.

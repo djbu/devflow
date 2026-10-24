@@ -1,0 +1,36 @@
+<section class="workspace" aria-label="Repository integration">
+  <aside id="connections" class="connection-area panel">
+    <div class="section-heading"><div><p class="eyebrow">Your integrations</p><h2>Connections</h2></div><span class="app-icon"><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg></span></div>
+    <p class="connection-intro">Connect a repository to give your workflows a place to run.</p>
+    @if (!webhookConfigured() && !loading()) { <p class="notice">Webhook delivery needs server configuration before connecting.</p> }
+    @if (loading()) { <p class="muted loading-copy">Loading repository connections...</p> }
+    @else {
+      @if (connections().length === 0) { <p class="connection-empty">No repositories connected yet.</p> }
+      @for (connection of connections(); track connection.id) {
+        <div class="connection-row"><span class="repo-icon"><svg class="icon" aria-hidden="true"><use href="icons.svg#github"/></svg></span><span class="repo-details"><strong>{{ connection.fullName }}</strong><small><span class="connection-dot" [class.inactive]="!connection.enabled"></span>{{ connection.enabled ? 'Connected' : 'Connection incomplete' }}</small></span></div>
+      }
+    }
+    <form class="connect-form" (ngSubmit)="connect()">
+      <label for="repository">Connect a repository</label>
+      <input id="repository" name="repository" [(ngModel)]="repository" required placeholder="owner/repository" />
+      <button type="submit" class="primary" [disabled]="saving() || !webhookConfigured()"><svg class="icon" aria-hidden="true"><use href="icons.svg#plus"/></svg>{{ saving() ? 'Connecting...' : 'Connect repository' }}</button>
+      <p>You’ll need administrator access.</p>
+    </form>
+    @if (error()) { <p class="notice error" role="alert">{{ error() }}</p> }
+  </aside>
+
+  <app-zaps class="automation-area" [connections]="connections()" />
+
+  <section id="activity" class="activity-area panel" aria-label="Recent activity">
+    <div class="section-heading"><div><h2>Recent activity</h2><p>A record of your workflows in action.</p></div><button type="button" class="subtle" (click)="refresh()" [disabled]="loading()"><svg class="icon" aria-hidden="true"><use href="icons.svg#refresh"/></svg>Refresh results</button></div>
+    @if (executions().length === 0) { <div class="activity-empty"><svg class="icon" aria-hidden="true"><use href="icons.svg#activity"/></svg><p>No executions recorded.</p><small>Open a pull request on a connected repository to get started.</small></div> }
+    @else {
+      <p id="activity-scroll-hint" class="table-hint">Swipe horizontally to see all details. Keyboard: focus the table and use the arrow keys.</p>
+      <div class="table-wrap" role="region" aria-label="Execution history" aria-describedby="activity-scroll-hint" tabindex="0"><table><thead><tr><th>Repository &amp; event</th><th>Status</th><th>Started</th><th><span class="sr-only">Details</span></th></tr></thead><tbody>
+        @for (execution of executions(); track execution.zapId + execution.deliveryId) {
+          <tr><td><div class="event-cell"><span class="event-icon"><svg class="icon" aria-hidden="true"><use href="icons.svg#pr"/></svg></span><span><strong>{{ execution.repository }}</strong><small>Pull request #{{ execution.pullRequestNumber }} opened</small>@if (execution.error) { <span class="execution-error">{{ execution.error }}</span> }</span></div></td><td><span class="badge execution-status" [class.failed]="execution.status === 'failed'" [class.processing]="execution.status === 'processing'">{{ execution.status }}</span></td><td class="event-time"><time [attr.datetime]="execution.startedAt">{{ execution.startedAt | date:'MMM d, HH:mm' }}</time></td><td class="details-cell">@if (execution.commentUrl) { <a [href]="execution.commentUrl" target="_blank" rel="noopener noreferrer" class="details-link" aria-label="View comment">View comment<svg class="icon" aria-hidden="true"><use href="icons.svg#external"/></svg></a> }</td></tr>
+        }
+      </tbody></table></div>
+    }
+  </section>
+</section>

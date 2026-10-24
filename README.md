@@ -20,10 +20,17 @@ evaluator access before sharing the submission.
   not inferred from file metadata.
 - Final code review and verification completed: **2026-10-24 08:46:41 -05:00**
   (agent-observed).
-- Exercise work stop / publication handoff: **2026-10-24 08:50 -05:00**, observed
+- Initial MVP publication handoff: **2026-10-24 08:50 -05:00**, observed
   with minute precision. Elapsed time from the user-reported start: about 2h 30m,
-  including planning, approvals, review, and publication. Update this record if
-  more exercise work is performed afterward.
+  including planning, approvals, review, and publication.
+- User-requested design polish: **2026-10-24 08:51:40 to 09:16 -05:00**,
+  about 24m 20s (stop observed with minute precision). This extends the exercise
+  work stop at that checkpoint to **09:16 America/Bogota** (about **2h 56m** elapsed).
+  The user subsequently approved committing and pushing this delivery.
+- Responsive follow-up: **2026-10-24 09:16:45 to 09:21 -05:00**, about
+  4m 15s (stop minute precision). Publication preparation/handoff followed at
+  **09:22 America/Bogota**, about **3h 2m** from the original start, including
+  the user-approved commit/push.
 - Four-hour deadline: 2026-10-24 10:20 -05:00. Review and commits also count.
 - [Milestone tracker](milestones/README.md) records observed implementation phase
   start/end times; gaps between phases are not subtracted from elapsed time.
@@ -283,3 +290,8 @@ During final review Codex fixed private-response caching, safe error diagnostics
 managed-hook path validation, and missing execution-update detection. A new log
 redaction test first assumed a full mounted path; its expectation was corrected
 to Express's error-handler route context and the final test run passes.
+
+Codex also implemented the user-requested visual polish after the initial MVP
+handoff: responsive workspace navigation, workflow cards, builder styling,
+connection/activity presentation, and local SVG assets. Existing behavior was
+checked through the automated suite and desktop/mobile browser review.

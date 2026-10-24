@@ -54,7 +54,7 @@ describe('Connection and authentication status', () => {
     fixture.detectChanges();
     http.expectOne('/api/zaps').flush({ zaps: [] });
     expect(fixture.nativeElement.textContent).toContain('Signed in as test-user');
-    fixture.nativeElement.querySelector('section[aria-label="GitHub account"] > button').click();
+    fixture.nativeElement.querySelector('button[aria-label="Sign out"]').click();
     const logout = http.expectOne('/api/auth/logout');
     expect(logout.request.method).toBe('POST');
     expect(logout.request.headers.get('X-Devflow-CSRF')).toBe('csrf');
